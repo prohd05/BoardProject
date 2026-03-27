@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Iceland&family=Indie+Flower&family=Jaro:opsz@6..72&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Iceland&family=Indie+Flower&family=Italiana&family=Itim&family=Jaro:opsz@6..72&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Happy+Monkey&family=Iceland&family=Indie+Flower&family=Italiana&family=Itim&family=Jaro:opsz@6..72&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
 body{
@@ -23,6 +24,16 @@ body{
         font-family: 'Itim';
         font-size: 30px;
         font-weight: 1;
+    }
+
+    p{
+        font-family: 'Happy Monkey';
+        font-size: 12px;
+    }
+
+    .paragraph1{
+        font-family: 'Happy Monkey';
+        font-size: 12px;
     }
 
     .siLook{
@@ -81,6 +92,27 @@ body{
         background-image: url('./assets/siSticky/sticky3.png');
         width: 180px;
         height: 180px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #siGoogle{
+        margin-left: 7% ;
+        border-radius: 10px;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 146px;
+        height: 45px;
+    }
+
+    #siGoogle img{
+        height: 32px;
+        width: 32px;
     }
 }
 
@@ -97,6 +129,15 @@ body{
         font-weight: 1;
     }
 
+    p{
+        font-family: 'Happy Monkey';
+        font-size: 16px;
+    }
+
+    .paragraph1{
+        font-family: 'Happy Monkey';
+        font-size: 16px;
+    }
 
     .siLook{
         background-color: #8B511F;
@@ -147,8 +188,29 @@ body{
     #stickybg{
         margin-top: 10%;
         background-image: url('./assets/siSticky/sticky2.png');
-        width: 266px;
-        height: 257px;
+        background-repeat: no-repeat;
+        width: 330px;
+        height: 331px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #siGoogle{
+        border-radius: 10px;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 267px;
+        height: 51px;
+    }
+
+    #siGoogle img{
+        height: 29px;
+        width: 29px;
     }
 }
 
@@ -164,6 +226,16 @@ body{
         font-family: 'Itim';
         font-size: 42px;
         font-weight: 1;
+    }
+
+    p{
+        font-family: 'Happy Monkey';
+        font-size: 20px;
+    }
+
+    .paragraph1{
+        font-family: 'Happy Monkey';
+        font-size: 20px;
     }
 
     .siLook{
@@ -217,9 +289,25 @@ body{
         background-image: url('./assets/siSticky/sticky1.png');
         height: 481px;
         width: 481px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     #siGoogle{
-        
+        border-radius: 10px;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 341px;
+        height: 81px;
+    }
+
+    #siGoogle img{
+        height: 58px;
+        width: 58px;
     }
 }
