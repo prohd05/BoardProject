@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Iceland&family=Indie+Flower&family=Jaro:opsz@6..72&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Iceland&family=Indie+Flower&family=Italiana&family=Itim&family=Jaro:opsz@6..72&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+body{
+    background-color: #ABE8F5;
+}
+
+#siBody{
+    display: flex;
+    justify-content: center;
+    margin-top: 5%;
+}
+
+/* Mobile Media Query*/
+@media screen and (max-width:799px) {
+    h1{
+        font-family: 'Indie Flower';
+        font-size: 38px; 
+    }
+
+    h2{
+        font-family: 'Itim';
+        font-size: 30px;
+        font-weight: 1;
+    }
+
+    .siLook{
+        background-color: #8B511F;
+        border: solid black 15px;
+        height: 940px;
+        width:320px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .siMain{
+        background-color: #BC7A38;
+        border: solid black 3px;
+        border-radius: 6px;
+        height: 792px;
+        width: 250px;
+    }
+
+    .siMain h1{
+        color: #FFFFFF;
+        text-align: center;
+        margin-bottom: 5%;
+        font-weight: 1;
+    }
+
+    #siInner{
+        margin-top: 0%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    #siSide{
+        background-color: #FCFF9E;
+        border:1px solid black;
+        border-radius: 9px;
+        width: 208px;
+        height: 453px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #siSide h2{
+        margin-top: 0%;
+        width: 177px;
+        height: 432px;
+    }
+
+    #stickybg{
+        background-image: url('./assets/siSticky/sticky3.png');
+        width: 180px;
+        height: 180px;
+    }
+}
+
+/* Tablet Media Query*/
+@media screen and (min-width: 800px) and (max-width: 1199px) {
+    h1{
+        font-family: 'Indie Flower';
+        font-size: 48px;
+    }
+
+    h2{
+        font-family: 'Itim';
+        font-size: 36px;
+        font-weight: 1;
+    }
+
+
+    .siLook{
+        background-color: #8B511F;
+        border: solid black 15px;
+        height: 931px;
+        width:764px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .siMain{
+        background-color: #BC7A38;
+        border: solid black 3px;
+        border-radius: 6px;
+        height: 785px;
+        width: 668px;
+    }
+
+    .siMain h1{
+        color: #FFFFFF;
+        text-align: center;
+        margin-bottom: 5%;
+        font-weight: 1;
+    }
+
+    #siInner{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #siSide{
+        background-color: #FCFF9E;
+        border:1px solid black;
+        border-radius: 9px;
+        width: 512px;
+        height: 275px;
+        display: flex;
+        justify-content: center;
+    }
+
+    #siSide h2{
+        width: 479px;
+    }
+
+    #stickybg{
+        margin-top: 10%;
+        background-image: url('./assets/siSticky/sticky2.png');
+        width: 266px;
+        height: 257px;
+    }
+}
+
+/* Desktop Media Query*/
+@media screen and (min-width: 1200px) {
+
+    h1{
+        font-family: 'Indie Flower';
+        font-size: 64px;
+    }
+
+    h2{
+        font-family: 'Itim';
+        font-size: 42px;
+        font-weight: 1;
+    }
+
+    .siLook{
+        background-color: #8B511F;
+        border: solid black 15px;
+        height: 876px;
+        width:1194px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .siMain{
+        background-color: #BC7A38;
+        border: solid black 3px;
+        border-radius: 6px;
+        height: 739px;
+        width: 1044px;
+    }
+
+    .siMain h1{
+        color: #FFFFFF;
+        text-align: center;
+        margin-bottom: 5%;
+        font-weight: 1;
+    }
+
+    #siInner{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    #siSide{
+        background-color: #FCFF9E;
+        border:1px solid black;
+        border-radius: 9px;
+        width: 415px;
+        height: 473px;
+
+        display: flex;
+        justify-content: center;
+    }
+
+    #siSide h2{
+        width: 359px;
+    }
+
+    #stickybg{
+        background-image: url('./assets/siSticky/sticky1.png');
+        height: 481px;
+        width: 481px;
+    }
+
+    #siGoogle{
+        
+    }
+}
