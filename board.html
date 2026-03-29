@@ -11,10 +11,28 @@
             <p id="unBoard"> Finding User... </p>
             <button id="soBoard"> Sign Out </button>
 
-            <p id="bName"> Board Name </p>
-            <p id="bID"> Board ID </p>
-            <p id="bOwner"> Owner </p>
-            <p id="bMembers"> Members </p>
+            <form id="research">
+                <input type="text" id="researchID" placeholder="Enter Board ID" required/>
+                <button id="rsButton" type="submit"> View Board </button>
+            </form>
+            <button id="backButton"> Back </button>
+
+            <p id="bName"> Board Name: N/A </p>
+            <p id="bId"> Board ID: N/A </p>
+            <p id="bOwner"> Owner: N/A </p>
+            <p id="bMembers"> Members: N/A </p>
+            <p id="bTF"> Is Member: N/A </p>
+
+            <button id="joinButton"> Join Board </button>
+
+            <form id="commentForm">
+                
+            </form>
+
+            <div id="commentsSection">
+                <h3>Comments</h3>
+                
+            </div>
         </div>
         <script type="module" src="board.js" defer></script>
     </body>

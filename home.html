@@ -16,10 +16,23 @@
                 <button id="crb" type="submit"> Create Board </button>
             </form>
 
-            <form id="join"> 
-                <input type="text" id="boardID" placeholder="Board ID"/>
-                <button id="jnb" type="submit"> Join Board </button>
-            </form>
+            
+            
+            <!---  -->
+            <h2>All Boards</h2>
+            <form id="join">  <!-- Convert this HTML to JS-->
+                    <input type="text" id="boardID" placeholder="Board ID" required/>
+                    <button id="jnb" type="submit"> View Board </button>
+                </form>
+            <div id="allBoards"> 
+                <!-- Make Functinal, On click of a board, it should set viewBoard to that ID.-->
+                <!-- Example for JS -->
+                 <button class= "boardButton">
+                    <p> Board Name: Example Board</p>
+                    <p> ID: 1234</p>
+                    <p> Creator: John Doe</p>
+                 </button>
+            </div>
         </div>
         <script type="module" src="home.js" defer></script>
     </body>

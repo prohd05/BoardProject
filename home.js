@@ -34,7 +34,6 @@ import { updateDoc, collection, doc, addDoc, getDoc , serverTimestamp} from "htt
 // Add Board
     document.addEventListener("DOMContentLoaded", () => {
     const createForm = document.getElementById("create");
-    const creButton = document.getElementById("crb");
     createForm.addEventListener("submit", async (event) => {
         event.preventDefault();
     
@@ -42,14 +41,14 @@ import { updateDoc, collection, doc, addDoc, getDoc , serverTimestamp} from "htt
         const user = auth.currentUser;
         
         try {
-          await addDoc(collection(db, "boards"), {
+          const boardRef = await addDoc(collection(db, "boards"), {
             name: bName,
             creatorID: user.uid, // Adds userID to doc
             createdAt: serverTimestamp(), // Timestamp for sorting
-            memebers: [user.uid] // Initialize members array with creator's ID
+            members: [user.uid] // Initialize members array with creator's ID
             });
             await updateDoc(doc(db, "users", user.uid), {
-                viewBoard: bName // Update user's viewBoard to the new board's name
+                viewBoard: boardRef.id // Update user's viewBoard to the new board's name
             });
             document.getElementById("boardName").value = ""; // Clear the input field
             window.location.href = "board.html"; // Redirect to board page after creation
@@ -63,4 +62,22 @@ import { updateDoc, collection, doc, addDoc, getDoc , serverTimestamp} from "htt
 // Join Board
     document.addEventListener("DOMContentLoaded", () => {
     const joinForm = document.getElementById("join");
+    joinForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const bID = document.getElementById("boardID").value;
+        const user = auth.currentUser;
+
+        try {
+            await updateDoc(doc(db, "users", user.uid), {
+                viewBoard: bID // Update user's viewBoard to the joined board's ID
+            });
+            document.getElementById("boardID").value = ""; // Clear the input field
+            window.location.href = "board.html"; // Redirect to board page after joining
+        } catch (error) {
+            alert("Error joining board: " + error.message); // Show error to user
+            console.error("Join board error:", error); // Log error to console
+        }
     });
+});
+    

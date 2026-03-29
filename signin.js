@@ -21,15 +21,14 @@ googleBttn.addEventListener("click", () => {
 
       // Add user data to Firestore
       try {
-        await setDoc(doc(db, "user", user.uid), {
+        await setDoc(doc(db, "users", user.uid), {
           name: user.displayName,
           email: user.email,
-          photoURL: user.photoURL,
           createdAt: serverTimestamp(),
-          viewBoard: 0, // Will be set to the boardID of the board they want to view 
+          viewBoard: "0", // Will be set to the boardID of the board they want to view 
           member: false // Will be set true when a user is on the page of a board they are apart of via the array check
         });
-        alert("Sign in successful! Welcome " + user.displayName);
+        //alert("Sign in successful! Welcome " + user.displayName);
         window.location.href = "home.html";
       } catch (dbError) {
         console.error("Error adding user to Firestore: ", dbError);
