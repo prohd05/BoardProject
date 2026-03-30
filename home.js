@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { updateDoc, collection, doc, addDoc, getDoc , serverTimestamp} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { updateDoc, collection, doc, addDoc, getDoc ,getDocs, serverTimestamp} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 // Listen for auth state changes
   onAuthStateChanged(auth, async (user) => {
@@ -17,6 +17,7 @@ import { updateDoc, collection, doc, addDoc, getDoc , serverTimestamp} from "htt
       window.location.href = "signin.html";
     }, 1000);
   }
+  displayBoards();
 });
 
 /// Sign Out Button
@@ -80,4 +81,53 @@ import { updateDoc, collection, doc, addDoc, getDoc , serverTimestamp} from "htt
         }
     });
 });
-    
+
+// Board Lists
+async function displayBoards() {
+const boardList = document.getElementById("allBoards");
+boardList.innerHTML = ""; // Clear existing comments
+const orderBoards = [];
+const boardSnapshot = await getDocs(collection(db, "boards"));
+boardSnapshot.forEach((doc) => {
+  orderBoards.push({ id: doc.id, ...doc.data() });
+});
+orderBoards.sort((a, b) => b.createdAt - a.createdAt); // Sort comments by createdAt in descending order
+orderBoards.forEach(async (board) => {
+  const boardDiv = document.createElement("div");
+  boardDiv.className = "board";
+
+  const boardButtton = document.createElement("button");
+  boardButtton.className = "boardButton";
+
+  const boardTitle = document.createElement("p");
+  boardTitle.textContent = board.name;
+
+  const boardID = document.createElement("p");
+  boardID.textContent = "Board ID: " + board.id;
+  const boardIDStrored = board.id;
+
+  const boardCreator = document.createElement("p");
+  const creatorRef = await getDoc(doc(db, "users", board.creatorID)); 
+  const cre = creatorRef.data().name;
+  boardCreator.textContent = "Created By: " + cre;
+
+  boardButtton.addEventListener("click", async () => {
+    const user = auth.currentUser;
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+          viewBoard: boardIDStrored // Update user's viewBoard to the joined board's ID
+      });
+      window.location.href = "board.html"; // Redirect to board page after joining
+  } catch (error) {
+      alert("Error joining board: " + error.message); // Show error to user
+      console.error("Join board error:", error); // Log error to console
+  }
+  });
+  
+  boardList.appendChild(boardDiv);
+  boardDiv.appendChild(boardButtton);
+  boardButtton.appendChild(boardTitle);
+  boardButtton.appendChild(boardID);
+  boardButtton.appendChild(boardCreator);
+});
+};

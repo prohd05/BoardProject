@@ -57,6 +57,11 @@ onAuthStateChanged(auth, async (user) => {
       const ownerName = ownerRef.data().name;
       document.getElementById("bOwner").textContent = "Owner: " + ownerName;
       
+      // Get Creation Date
+      const createdAt = boardRef.data().createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
+      document.getElementById("bDate").textContent = " Creation Date: " + createdAt.toLocaleString();
+
+
     // Get Board Members
       const members = boardRef.data().members; // The array of members itself
       
@@ -75,15 +80,29 @@ onAuthStateChanged(auth, async (user) => {
 
         // Join/Leave Button
         const joinButton = document.getElementById("joinButton");
+        if (user.uid !== ownerID){ 
         joinButton.textContent = isMember ? "Leave Board" : "Join Board";
+        }
+        else{
+          joinButton.style.display = "none";
+        }
 
         joinButton.addEventListener("click", async () => {
           try{
-            if (isMember) {
+            if (isMember){ 
               // Remove user from members array
+              await updateDoc(doc(db, "boards", BID), {
+                members: members.filter(memberID => memberID !== user.uid) // Remove user ID from members array
+              });
+              window.location.reload(); // Refresh the page to update the membership status
             }
             else{
               // Add user to members array
+              await updateDoc(doc(db, "boards", BID), {
+                members: [...members, user.uid] // Add user ID to members array
+              });
+              window.location.reload(); // Refresh the page to update the membership status
+
             }
           }
           catch(error){
@@ -172,14 +191,32 @@ onAuthStateChanged(auth, async (user) => {
         const likeButton = document.createElement("p");
         likeButton.textContent = "Creator Liked: " + clod;
 
+        // Check if user is a member of the board
+        const isMember = members.includes(user.uid);
+        document.getElementById("bTF").textContent = "Is Member: " + isMember;
+
+        // Upvote Button
         const upvoteButton = document.createElement("button");
         upvoteButton.textContent = "Upvote (" + comment.upvotes.length + ")";
 
+        upvoteButton.addEventListener("click", async () => {
+
+        });
+
+        const comRef = await getDoc(doc(db, "comments", comment.id));
+        const likers = comRef.data().upvotes; // The array of members itself
+        const likeID = "";
+        for (const likeID of likers) {
+          const comRef = await getDoc(doc(db, "users", likeID));
+          likeID += comRef.data().id + ", ";
+        }
+        const likeTF = likeID.includes(user.uid);
+
+        // Downvote Button
         const downvoteButton = document.createElement("button");
         downvoteButton.textContent = "Downvote (" + comment.downvotes.length + ")";
 
         // Make Up/Downvote Buttons Functional, Make creator like fuctional, Make delete/edit buttons for comment authors
-
         comList.appendChild(comDiv);
         comDiv.appendChild(comText);
         comDiv.appendChild(comAuthor);
@@ -203,7 +240,7 @@ onAuthStateChanged(auth, async (user) => {
         }
         
         // Makes the delete button on visible for owner and author
-        if (user.uid === comment.authorID || user.uid === comment.boardCID || user.uid === oID){
+        if (user.uid === comment.authorID || user.uid === comment.boardCID){
           const deleteButton = document.createElement("button");
           deleteButton.textContent = "Delete";
           comDiv.appendChild(deleteButton);
