@@ -63,7 +63,7 @@ onAuthStateChanged(auth, async (user) => {
       
       // Get Creation Date
       const createdAt = boardRef.data().createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
-      document.getElementById("bDate").textContent = " Creation Date: " + createdAt.toLocaleString();
+      document.getElementById("bDate").textContent = " Creation Date: " + createdAt.toLocaleDateString("en-US");  
 
 
     // Get Board Members

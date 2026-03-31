@@ -115,6 +115,10 @@ orderBoards.forEach(async (board) => {
   const cre = creatorRef.data().name;
   boardCreator.textContent = "Created By: " + cre;
 
+  const boardCreation = document.createElement("p");
+  const date = board.createdAt.toDate();
+  boardCreation.textContent = "Created On: " + date.toLocaleDateString("en-US"); 
+
   boardButtton.addEventListener("click", async () => {
     const user = auth.currentUser;
     try {
@@ -133,5 +137,6 @@ orderBoards.forEach(async (board) => {
   boardButtton.appendChild(boardTitle);
   boardButtton.appendChild(boardID);
   boardButtton.appendChild(boardCreator);
+  boardButtton.appendChild(boardCreation);
 });
 };
