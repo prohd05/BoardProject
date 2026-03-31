@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { updateDoc, getDocs, collection, doc, addDoc, getDoc , serverTimestamp} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { updateDoc, getDocs, collection, doc, addDoc, getDoc , serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 
 // Listen for auth state changes
@@ -78,6 +78,10 @@ onAuthStateChanged(auth, async (user) => {
         const isMember = members.includes(user.uid);
         document.getElementById("bTF").textContent = "Is Member: " + isMember;
 
+        // Display Member Count
+        const memberCount = members.length;
+        document.getElementById("bMCount").textContent = "Member Count: " + memberCount;
+
         // Join/Leave Button
         const joinButton = document.getElementById("joinButton");
         if (user.uid !== ownerID){ 
@@ -102,7 +106,6 @@ onAuthStateChanged(auth, async (user) => {
                 members: [...members, user.uid] // Add user ID to members array
               });
               window.location.reload(); // Refresh the page to update the membership status
-
             }
           }
           catch(error){
@@ -114,7 +117,7 @@ onAuthStateChanged(auth, async (user) => {
       displayComments();
 
       // Allow Comment
-      if (isMember){
+      
         const commentForm = document.getElementById("commentForm");
         
         const commentInput = document.createElement("input");
@@ -129,7 +132,12 @@ onAuthStateChanged(auth, async (user) => {
 
         commentForm.appendChild(commentInput);
         commentForm.appendChild(commentButton);
+      if (!isMember){
+        commentInput.disabled = true;
+        commentButton.disabled = true;
+        commentInput.placeholder = "Join the board to comment";
       }
+      
 
       // Add Comments 
       commentForm.addEventListener("submit", async (event) => {
@@ -166,88 +174,178 @@ onAuthStateChanged(auth, async (user) => {
           orderComments.push({ id: doc.id, ...doc.data() });
         }
       });
-      orderComments.sort((a, b) => b.createdAt - a.createdAt); // Sort comments by createdAt in descending order
+      orderComments.sort((a, b) => b.createdAt - a.createdAt); // Sort by creation dat      
       orderComments.forEach(async (comment) => {
+          const comDiv = document.createElement("div");
+          comDiv.className = "commentBox";
 
-        const comDiv = document.createElement("div");
-        comDiv.className = "commentBox";
+          const comText = document.createElement("p");
+          comText.className = "commentText";
+          comText.textContent = comment.text;
 
-        const comText = document.createElement("p");
-        comText.className = "commentText";
-        comText.textContent = comment.text;
+          const authorRef = await getDoc(doc(db, "users", comment.authorID)); // Gets authors ID
+          const authorName = authorRef.data().name; // Pulls authors name from ID
+          const comAuthor = document.createElement("p");
+          comAuthor.className = "commentBy";
+          comAuthor.textContent = "By: " + authorName;
 
-        const authorRef = await getDoc(doc(db, "users", comment.authorID)); // Gets authors ID
-        const authorName = authorRef.data().name; // Pulls authors name from ID
-        const comAuthor = document.createElement("p");
-        comAuthor.className = "commentBy";
-        comAuthor.textContent = "By: " + authorName;
+          const date = comment.createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
+          const comDate = document.createElement("p");
+          comDate.className = "commentDate";
+          comDate.textContent = "Posted on: " + date.toLocaleString(); // Format date as a readable string
 
-        const date = comment.createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
-        const comDate = document.createElement("p");
-        comDate.className = "commentDate";
-        comDate.textContent = "Posted on: " + date.toLocaleString(); // Format date as a readable string
+          const likeMessage = document.createElement("p");
 
-        const clod = comment.creatorLiked;
-        const likeButton = document.createElement("p");
-        likeButton.textContent = "Creator Liked: " + clod;
+          // Check if user is a member of the board
+          const isMember = members.includes(user.uid);
+          document.getElementById("bTF").textContent = "Is Member: " + isMember;
 
-        // Check if user is a member of the board
-        const isMember = members.includes(user.uid);
-        document.getElementById("bTF").textContent = "Is Member: " + isMember;
+          // Upvote and Downvote Buttons
+          const upvoteButton = document.createElement("button");
+          const downvoteButton = document.createElement("button");
 
-        // Upvote Button
-        const upvoteButton = document.createElement("button");
-        upvoteButton.textContent = "Upvote (" + comment.upvotes.length + ")";
+          const commentRef = doc(db, "comments", comment.id);
+          let likers = [...comment.upvotes];
+          let dislikers = [...comment.downvotes];
 
-        upvoteButton.addEventListener("click", async () => {
+          function updateUpvoteText() {
+            upvoteButton.textContent = "Upvote (" + likers.length + ")";
+            if(likers.includes(user.uid)){
+              upvoteButton.style.backgroundColor = "green";
+            }
+            else{
+              upvoteButton.style.backgroundColor = "white";
+            }
+          }
+          function updateDownvoteText() {
+            downvoteButton.textContent = "Downvote (" + dislikers.length + ")";
+            if(dislikers.includes(user.uid)){
+              downvoteButton.style.backgroundColor = "red";
+            }
+            else{
+              downvoteButton.style.backgroundColor = "white";
+            }
+          }
+          updateUpvoteText();
+          updateDownvoteText();
 
+          // Upvote
+          upvoteButton.addEventListener("click", async () => {
+            try {
+              const hasLiked = likers.includes(user.uid);
+              const hasDisliked = dislikers.includes(user.uid);
+              if (hasLiked) {
+                likers = likers.filter(id => id !== user.uid);
+              } else {
+                likers = [...likers, user.uid];
+                dislikers = dislikers.filter(id => id !== user.uid);
+              }
+              await updateDoc(commentRef, {
+                upvotes: likers,
+                downvotes: dislikers
+              });
+              updateUpvoteText();
+              updateDownvoteText();
+
+            } catch (error) {
+              console.error("Upvote error:", error);
+              alert(error.message);
+            }
+          });
+
+          // Downvote
+          downvoteButton.addEventListener("click", async () => {
+            try {
+              const hasLiked = likers.includes(user.uid);
+              const hasDisliked = dislikers.includes(user.uid);
+
+              if (hasDisliked) {
+                dislikers = dislikers.filter(id => id !== user.uid);
+              } else {
+                dislikers = [...dislikers, user.uid];
+                likers = likers.filter(id => id !== user.uid);
+              }
+              await updateDoc(commentRef, {
+                upvotes: likers,
+                downvotes: dislikers
+              });
+              updateDownvoteText();
+              updateUpvoteText();
+              
+            } catch (error) {
+              console.error("Downvote error:", error);
+              alert(error.message);
+            }
+          });
+
+          // Make Up/Downvote Buttons Functional, Make creator like fuctional, Make delete/edit buttons for comment authors
+          comList.appendChild(comDiv);
+          comDiv.appendChild(comText);
+          comDiv.appendChild(comAuthor);
+          comDiv.appendChild(comDate);
+          comDiv.appendChild(likeMessage);
+          comDiv.appendChild(upvoteButton);
+          comDiv.appendChild(downvoteButton);
+
+          // Makes edit button only visible for author
+          if (user.uid === comment.authorID){
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+            comDiv.appendChild(editButton);
+          }
+
+          // Creator Like Button
+          if (user.uid === comment.boardCID){ 
+            const likeButton = document.createElement("button");
+            comDiv.appendChild(likeButton);
+
+            function updateCreatorLikeText() {
+              likeButton.textContent = comment.creatorLiked ? "Creator has Liked" : "Creator Like";
+              likeMessage.textContent = "Creator Liked: " + comment.creatorLiked;
+              if(comment.creatorLiked){
+                likeButton.style.backgroundColor = "green";
+              }
+              else{
+                likeButton.style.backgroundColor = "white";
+              }
+            }
+
+            updateCreatorLikeText();
+
+            likeButton.addEventListener("click", async () => {
+            try {
+              comment.creatorLiked = !comment.creatorLiked;
+              updateCreatorLikeText();
+              await updateDoc(commentRef, {
+                creatorLiked: comment.creatorLiked,
+              });
+            } catch (error) {
+              console.error("Upvote error:", error);
+              alert(error.message);
+            }
+          });
+          }
+          
+          // Makes the delete button on visible for owner and author
+          if (user.uid === comment.authorID || user.uid === comment.boardCID){
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            comDiv.appendChild(deleteButton);
+            deleteButton.style.backgroundColor = "white";
+
+            deleteButton.addEventListener("click", async () => {
+              try {
+                await deleteDoc(doc(db, "comments", comment.id));
+                displayComments();
+              } catch (error) {
+                console.error("Delete error:", error);
+                alert(error.message);
+              }
+            });
+          }
         });
-
-        const comRef = await getDoc(doc(db, "comments", comment.id));
-        const likers = comRef.data().upvotes; // The array of members itself
-        const likeID = "";
-        for (const likeID of likers) {
-          const comRef = await getDoc(doc(db, "users", likeID));
-          likeID += comRef.data().id + ", ";
-        }
-        const likeTF = likeID.includes(user.uid);
-
-        // Downvote Button
-        const downvoteButton = document.createElement("button");
-        downvoteButton.textContent = "Downvote (" + comment.downvotes.length + ")";
-
-        // Make Up/Downvote Buttons Functional, Make creator like fuctional, Make delete/edit buttons for comment authors
-        comList.appendChild(comDiv);
-        comDiv.appendChild(comText);
-        comDiv.appendChild(comAuthor);
-        comDiv.appendChild(comDate);
-        comDiv.appendChild(likeButton);
-        comDiv.appendChild(upvoteButton);
-        comDiv.appendChild(downvoteButton);
-
-        // Makes edit button only visible for author
-        if (user.uid === comment.authorID){
-          const editButton = document.createElement("button");
-          editButton.textContent = "Edit";
-          comDiv.appendChild(editButton);
-        }
-
-        // Creator Like Button
-        if (user.uid === comment.boardCID){ 
-          const likeButton = document.createElement("button");
-          comDiv.appendChild(likeButton);
-          likeButton.textContent = clod ? "Creator Unlike" : "Creator Like";
-        }
-        
-        // Makes the delete button on visible for owner and author
-        if (user.uid === comment.authorID || user.uid === comment.boardCID){
-          const deleteButton = document.createElement("button");
-          deleteButton.textContent = "Delete";
-          comDiv.appendChild(deleteButton);
-        }
-       });
-      };
-    });
+        };
+      });
 
      // Look at new Board
       document.addEventListener("DOMContentLoaded", () => {
