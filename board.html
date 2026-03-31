@@ -8,8 +8,24 @@
     </head>
     <body>
         <div>
-            <p id="unBoard"> Finding User... </p>
-            <button id="soBoard"> Sign Out </button>
+            <nav class="nav">
+                <div class="nLeft">
+                    <img class="nLogo" src="assets/logo.png" alt="Logo"/>
+                    <h2> Post-It! </h2>
+                </div>
+                <div class="nRight">
+                    <div class="nInfo"> 
+                        <img id="pfpBoard" class="navPFP"/>
+                        <div class="nNames"> 
+                            <p id="unBoard" class="nName" > Name Here... </p>
+                            <p id="emBoard" class="nEmail"> Email Here </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="nOut">
+                    <button id="soBoard" class="paragraph1"> Logout </button>
+                </div>
+            </nav>
 
             <form id="research">
                 <input type="text" id="researchID" placeholder="Enter Board ID" required/>

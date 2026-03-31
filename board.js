@@ -7,9 +7,13 @@ import { updateDoc, getDocs, collection, doc, addDoc, getDoc , serverTimestamp, 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
       try {
+        const pfp = document.getElementById("pfpBoard"); // Get the element to display the profile picture
         const uni = document.getElementById("unBoard"); // Get the element to display the username
+        const mail = document.getElementById("emBoard"); // Get the element to display the email
         uni.textContent = user.displayName; // Set the username in the navbar
-      } catch (error) {
+        mail.textContent = user.email; // Set the email in the navbar
+        pfp.src = user.photoURL; // Set the profile picture in the navbar
+        } catch (error) {
         console.error("Error fetching user:", error); 
       }
 
@@ -204,6 +208,11 @@ onAuthStateChanged(auth, async (user) => {
           const upvoteButton = document.createElement("button");
           const downvoteButton = document.createElement("button");
 
+          if(!isMember){
+            upvoteButton.disabled = true;
+            downvoteButton.disabled = true;
+          }
+
           const commentRef = doc(db, "comments", comment.id);
           let likers = [...comment.upvotes];
           let dislikers = [...comment.downvotes];
@@ -286,13 +295,6 @@ onAuthStateChanged(auth, async (user) => {
           comDiv.appendChild(likeMessage);
           comDiv.appendChild(upvoteButton);
           comDiv.appendChild(downvoteButton);
-
-          // Makes edit button only visible for author
-          if (user.uid === comment.authorID){
-            const editButton = document.createElement("button");
-            editButton.textContent = "Edit";
-            comDiv.appendChild(editButton);
-          }
 
           // Creator Like Button
           if (user.uid === comment.boardCID){ 

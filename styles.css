@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Iceland&family=Indie+Flower&family=Jaro:opsz@6..72&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Iceland&family=Indie+Flower&family=Italiana&family=Itim&family=Jaro:opsz@6..72&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Happy+Monkey&family=Iceland&family=Indie+Flower&family=Italiana&family=Itim&family=Jaro:opsz@6..72&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Happy+Monkey&family=Iceland&family=Inder&family=Indie+Flower&family=Italiana&family=Itim&family=Jaro:opsz@6..72&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 body{
     background-color: #ABE8F5;
@@ -23,6 +23,12 @@ body{
     h2{
         font-family: 'Itim';
         font-size: 30px;
+        font-weight: 1;
+    }
+    
+    h3{
+        font-family: 'Inder';
+        font-size: 24px;
         font-weight: 1;
     }
 
@@ -114,6 +120,70 @@ body{
         height: 32px;
         width: 32px;
     }
+
+    .nav{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #5282DB;
+        height: 125px;
+        color:#FFFFFF;
+    }
+
+    .nLeft{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nLogo{
+        height: 89px;
+        width: 89px;
+    }
+
+    .nRight{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-left: 15%;
+    }
+
+    .nInfo{
+        display: flex;
+        align-items: center;
+        height: 125px;
+        
+    }
+
+    .nNames{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 125px;
+    }
+
+    .nNames{
+        text-overflow: ellipsis;
+    }
+
+    .navPFP{
+        margin-right: 2%;
+        height: 46px;
+        width: 46px;
+        border-radius: 50%;
+    }
+
+    .nNames p{
+        margin:0px;
+        padding:0px;
+    }
+
+    .nOut button{
+        text-decoration: underline;
+        background-color: transparent;
+        border: none;
+        color:#FFFFFF;
+    }
 }
 
 /* Tablet Media Query*/
@@ -126,6 +196,12 @@ body{
     h2{
         font-family: 'Itim';
         font-size: 36px;
+        font-weight: 1;
+    }
+
+    h3{
+        font-family: 'Inder';
+        font-size: 32px;
         font-weight: 1;
     }
 
@@ -212,6 +288,67 @@ body{
         height: 29px;
         width: 29px;
     }
+
+    .nav{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #5282DB;
+        height: 125px;
+        color:#FFFFFF;
+    }
+
+    .nLeft{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nLogo{
+        height: 89px;
+        width: 89px;
+    }
+
+    .nRight{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-left: 15%;
+    }
+
+    .nInfo{
+        display: flex;
+        align-items: center;
+        height: 125px;
+        
+    }
+
+    .nNames{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 125px;
+    }
+
+    .navPFP{
+        margin-right: 2%;
+        height: 87px;
+        width: 87px;
+        border-radius: 50%;
+    }
+
+    .nNames p{
+        margin:0px;
+        padding:0px;
+    }
+
+
+    .nOut button{
+        text-decoration: underline;
+        background-color: transparent;
+        border: none;
+        color:#FFFFFF;
+    }
 }
 
 /* Desktop Media Query*/
@@ -225,6 +362,12 @@ body{
     h2{
         font-family: 'Itim';
         font-size: 42px;
+        font-weight: 1;
+    }
+
+    h3{
+        font-family: 'Inder';
+        font-size: 36px;
         font-weight: 1;
     }
 
@@ -310,4 +453,102 @@ body{
         height: 58px;
         width: 58px;
     }
+
+    .nav{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #5282DB;
+        height: 125px;
+        color:#FFFFFF;
+    }
+
+    .nLeft{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nLogo{
+        height: 89px;
+        width: 89px;
+    }
+
+    .nRight{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-left: 15%;
+    }
+
+    .nInfo{
+        display: flex;
+        align-items: center;
+        height: 125px;
+        
+    }
+
+    .nNames{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 125px;
+    }
+
+    .navPFP{
+        margin-right: 2%;
+        height: 87px;
+        width: 87px;
+        border-radius: 50%;
+    }
+
+    .nNames p{
+        margin:0px;
+        padding:0px;
+    }
+
+    .nOut button{
+        text-decoration: underline;
+        background-color: transparent;
+        border: none;
+        color:#FFFFFF;
+    }
+
+    .sides{
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .cvboard{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .cvboard h3{
+        margin-bottom: 1%;
+    }
+
+    .inboard{
+        display: flex;
+        align-items: center;
+    }
+
+    .cvboard input{
+        width:239px;
+        height: 41px;
+        border: #5282DB solid 2px;
+        border-radius: 5px;
+        background-color: #FFFFFF;
+        margin-right: 1%;
+    }
+
+    .cvboard button{
+        width: 71px;
+        height: 41px;
+        border: #5282DB solid 2px;
+        border-radius: 5px;
+        background-color: #FFFFFF;
+    }
+    
 }

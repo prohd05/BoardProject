@@ -6,8 +6,12 @@ import { updateDoc, collection, doc, addDoc, getDoc ,getDocs, serverTimestamp} f
   onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
+      const pfp = document.getElementById("pfpHome"); // Get the element to display the profile picture
       const uni = document.getElementById("unHome"); // Get the element to display the username
+      const mail = document.getElementById("emHome"); // Get the element to display the email
       uni.textContent = user.displayName; // Set the username in the navbar
+      mail.textContent = user.email; // Set the email in the navbar
+      pfp.src = user.photoURL; // Set the profile picture in the navbar
     } catch (error) {
       console.error("Error fetching user:", error); 
     }

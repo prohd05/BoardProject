@@ -25,6 +25,7 @@ googleBttn.addEventListener("click", () => {
           name: user.displayName,
           email: user.email,
           createdAt: serverTimestamp(),
+          pfp: user.photoURL,
           viewBoard: "0", // Will be set to the boardID of the board they want to view 
           member: false // Will be set true when a user is on the page of a board they are apart of via the array check
         });

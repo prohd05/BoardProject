@@ -8,29 +8,55 @@
     </head>
     <body>
         <div>
-            <p id="unHome"> Finding User... </p>
-            <button id="soHome"> Sign Out </button>
+            <nav class="nav">
+                <div class="nLeft">
+                    <img class="nLogo" src="assets/logo.png" alt="Logo"/>
+                    <h2> Post-It! </h2>
+                </div>
+                <div class="nRight">
+                    <div class="nInfo"> 
+                        <img id="pfpHome" class="navPFP"/>
+                        <div class="nNames"> 
+                            <p id="unHome" class="nName" > Name Here... </p>
+                            <p id="emHome" class="nEmail"> Email Here </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="nOut">
+                    <button id="soHome" class="paragraph1"> Logout </button>
+                </div>
+            </nav>
 
-            <form id="create">
-                <input type="text" id="boardName" placeholder="Board Name"/>
-                <button id="crb" type="submit"> Create Board </button>
-            </form>
-
-            
-            <!---  -->
-            <h2>All Boards</h2>
-            <form id="join">  <!-- Convert this HTML to JS-->
-                    <input type="text" id="boardID" placeholder="Board ID" required/>
-                    <button id="jnb" type="submit"> View Board </button>
+            <div class="sides">
+                <form id="create" class="cvboard">  
+                    <h3> Create A Board:</h3>
+                    <div>
+                        <label for="boardName" class="paragraph1"> Board Topic </label> <br/>
+                        <div class="inboard">
+                            <input class="paragraph1" type="text" id="boardName" placeholder="Board Name"/>
+                            <button id="crb" type="submit"> Create </button>
+                        </div>
+                    </div>
                 </form>
+
+                <form id="join" class="cvboard">
+                    <h3> Join A Board: </h3> 
+                    <div>
+                        <label for="boardID" c  lass="paragraph1"> Board ID </label> <br/>
+                        <div class="inboard">
+                            <input class="paragraph1" type="text" id="boardID" placeholder="Board ID" required/>
+                            <button id="jnb" type="submit"> Join </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <h2>All Boards</h2>
+            
             <div id="allBoards"> 
                 <!-- Make Functinal, On click of a board, it should set viewBoard to that ID.-->
                 <!-- Example for JS -->
-                 <button class= "boardButton">
-                    <p> Board Name: Example Board</p>
-                    <p> ID: 1234</p>
-                    <p> Creator: John Doe</p>
-                 </button>
+                 
             </div>
         </div>
         <script type="module" src="home.js" defer></script>
