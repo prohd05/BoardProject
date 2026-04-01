@@ -13,6 +13,11 @@ body{
     margin-top: 5%;
 }
 
+.boardT{
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* Mobile Media Query*/
 @media screen and (max-width:799px) {
     h1{
@@ -211,6 +216,11 @@ body{
         width: 229px;
         text-align: start;
     }
+
+    .sides{
+        display: flex;
+        justify-content: space-evenly;
+    }
 }
 
 /* Tablet Media Query*/
@@ -402,6 +412,11 @@ body{
         border-radius: 5px;
         width: 335px;
         text-align: start;
+    }
+
+    .sides{
+        display: flex;
+        justify-content: space-evenly;
     }
 }
 

@@ -153,6 +153,7 @@ onAuthStateChanged(auth, async (user) => {
           text: coi,
           boardID: BID,
           boardCID:ownerRef.id,
+          commentID:"0",
           authorID: user.uid,
           createdAt: serverTimestamp(),
           upvotes: [],
@@ -168,18 +169,19 @@ onAuthStateChanged(auth, async (user) => {
     });
     
       // Display Comments
-      async function displayComments() {
+      async function displayComments() {        
       const comList = document.getElementById("commentsSection");
       comList.innerHTML = ""; // Clear existing comments
       const orderComments = [];
       const commentsSnapshot = await getDocs(collection(db, "comments"));
       commentsSnapshot.forEach((doc) => {
-        if (doc.data().boardID === BID){
+        if (doc.data().boardID === BID && doc.data().commentID === "0"){
           orderComments.push({ id: doc.id, ...doc.data() });
         }
       });
       orderComments.sort((a, b) => b.createdAt - a.createdAt); // Sort by creation dat      
       orderComments.forEach(async (comment) => {
+        
           const comDiv = document.createElement("div");
           comDiv.className = "commentBox";
 
@@ -345,9 +347,240 @@ onAuthStateChanged(auth, async (user) => {
               }
             });
           }
+
+          // Reply to Comment 
+          const replyForm = document.createElement("form");
+        
+          const replyInput = document.createElement("input");
+          replyInput.type = "text";
+          replyInput.id = "replyInput";
+          replyInput.placeholder = "Enter your comment";
+          replyInput.required = true;
+
+          const replyButton = document.createElement("button");
+          replyButton.type = "submit";
+          replyButton.textContent = "Post Comment";
+          comDiv.appendChild(replyForm);
+          replyForm.appendChild(replyInput);
+          replyForm.appendChild(replyButton);
+
+          const replyArea = document.createElement("div");
+          comDiv.appendChild(replyArea);
+        displayReplies(comment.id);
+        async function displayReplies(CID) {
+          replyArea.innerHTML = ""; // Clear existing comments
+            const orderReply = [];
+            const replySnapshot = await getDocs(collection(db, "comments"));
+            replySnapshot.forEach((doc) => {
+              if (doc.data().commentID === CID) { // Checks if comment is a top level comment for the board
+                orderReply.push({ id: doc.id, ...doc.data() });
+              }
+            });
+            orderReply.sort((a, b) => b.createdAt - a.createdAt); // Sort by creation dat      
+            orderReply.forEach(async (comment) => {
+                const repDiv = document.createElement("div");
+                repDiv.className = "commentBox";
+      
+                const comText = document.createElement("p");
+                comText.className = "commentText";
+                comText.textContent = "REPLY:" + comment.text;
+      
+                const authorRef = await getDoc(doc(db, "users", comment.authorID)); // Gets authors ID
+                const authorName = authorRef.data().name; // Pulls authors name from ID
+                const comAuthor = document.createElement("p");
+                comAuthor.className = "commentBy";
+                comAuthor.textContent = "By: " + authorName;
+      
+                const date = comment.createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
+                const comDate = document.createElement("p");
+                comDate.className = "commentDate";
+                comDate.textContent = "Posted on: " + date.toLocaleString(); // Format date as a readable string
+      
+                const likeMessage = document.createElement("p");
+      
+                // Check if user is a member of the board
+                const isMember = members.includes(user.uid);
+                document.getElementById("bTF").textContent = "Is Member: " + isMember;
+      
+                // Upvote and Downvote Buttons
+                const upvoteButton = document.createElement("button");
+                const downvoteButton = document.createElement("button");
+      
+                if(!isMember){
+                  upvoteButton.disabled = true;
+                  downvoteButton.disabled = true;
+                }
+      
+                const commentRef = doc(db, "comments", comment.id);
+                let likers = [...comment.upvotes];
+                let dislikers = [...comment.downvotes];
+      
+                function updateUpvoteText() {
+                  upvoteButton.textContent = "Upvote (" + likers.length + ")";
+                  if(likers.includes(user.uid)){
+                    upvoteButton.style.backgroundColor = "green";
+                  }
+                  else{
+                    upvoteButton.style.backgroundColor = "white";
+                  }
+                }
+                function updateDownvoteText() {
+                  downvoteButton.textContent = "Downvote (" + dislikers.length + ")";
+                  if(dislikers.includes(user.uid)){
+                    downvoteButton.style.backgroundColor = "red";
+                  }
+                  else{
+                    downvoteButton.style.backgroundColor = "white";
+                  }
+                }
+                updateUpvoteText();
+                updateDownvoteText();
+      
+                // Upvote
+                upvoteButton.addEventListener("click", async () => {
+                  try {
+                    const hasLiked = likers.includes(user.uid);
+                    const hasDisliked = dislikers.includes(user.uid);
+                    if (hasLiked) {
+                      likers = likers.filter(id => id !== user.uid);
+                    } else {
+                      likers = [...likers, user.uid];
+                      dislikers = dislikers.filter(id => id !== user.uid);
+                    }
+                    await updateDoc(commentRef, {
+                      upvotes: likers,
+                      downvotes: dislikers
+                    });
+                    updateUpvoteText();
+                    updateDownvoteText();
+      
+                  } catch (error) {
+                    console.error("Upvote error:", error);
+                    alert(error.message);
+                  }
+                });
+      
+                // Downvote
+                downvoteButton.addEventListener("click", async () => {
+                  try {
+                    const hasLiked = likers.includes(user.uid);
+                    const hasDisliked = dislikers.includes(user.uid);
+      
+                    if (hasDisliked) {
+                      dislikers = dislikers.filter(id => id !== user.uid);
+                    } else {
+                      dislikers = [...dislikers, user.uid];
+                      likers = likers.filter(id => id !== user.uid);
+                    }
+                    await updateDoc(commentRef, {
+                      upvotes: likers,
+                      downvotes: dislikers
+                    });
+                    updateDownvoteText();
+                    updateUpvoteText();
+                    
+                  } catch (error) {
+                    console.error("Downvote error:", error);
+                    alert(error.message);
+                  }
+                });
+      
+                // Make Up/Downvote Buttons Functional, Make creator like fuctional, Make delete/edit buttons for comment authors
+                replyArea.appendChild(repDiv)
+                repDiv.appendChild(comText);
+                repDiv.appendChild(comAuthor);
+                repDiv.appendChild(comDate);
+                repDiv.appendChild(likeMessage);
+                repDiv.appendChild(upvoteButton);
+                repDiv.appendChild(downvoteButton);
+      
+                // Creator Like Button
+                if (user.uid === comment.boardCID){ 
+                  const likeButton = document.createElement("button");
+                  repDiv.appendChild(likeButton);
+      
+                  function updateCreatorLikeText() {
+                    likeButton.textContent = comment.creatorLiked ? "Creator has Liked" : "Creator Like";
+                    likeMessage.textContent = "Creator Liked: " + comment.creatorLiked;
+                    if(comment.creatorLiked){
+                      likeButton.style.backgroundColor = "green";
+                    }
+                    else{
+                      likeButton.style.backgroundColor = "white";
+                    }
+                  }
+      
+                  updateCreatorLikeText();
+      
+                  likeButton.addEventListener("click", async () => {
+                  try {
+                    comment.creatorLiked = !comment.creatorLiked;
+                    updateCreatorLikeText();
+                    await updateDoc(commentRef, {
+                      creatorLiked: comment.creatorLiked,
+                    });
+                  } catch (error) {
+                    console.error("Upvote error:", error);
+                    alert(error.message);
+                  }
+                });
+                }
+                
+                // Makes the delete button on visible for owner and author
+                if (user.uid === comment.authorID || user.uid === comment.boardCID){
+                  const deleteButton = document.createElement("button");
+                  deleteButton.textContent = "Delete";
+                  repDiv.appendChild(deleteButton);
+                  deleteButton.style.backgroundColor = "white";
+      
+                  deleteButton.addEventListener("click", async () => {
+                    try {
+                      await deleteDoc(doc(db, "comments", comment.id));
+                      displayComments();
+                    } catch (error) {
+                      console.error("Delete error:", error);
+                      alert(error.message);
+                    }
+                  });
+                }
+              });
+            };
+
+          
+        if (!isMember){
+          replyInput.disabled = true;
+          replyButton.disabled = true;
+          replyInput.placeholder = "Join the board to comment";
+        }
+
+        replyForm.addEventListener("submit", async (event) => {
+              const roi = replyInput.value;
+              event.preventDefault();
+              
+            try{
+              await addDoc(collection(db, "comments"), {
+                text: roi,
+                boardID: BID,
+                boardCID:ownerRef.id,
+                commentID:comment.id,
+                authorID: user.uid,
+                createdAt: serverTimestamp(),
+                upvotes: [],
+                downvotes: [],
+                creatorLiked: false,
+              });
+              await displayReplies(comment.id);
+              replyInput.value = ""; // Clear the input field after posting
+            } catch(error){
+              console.error("Error adding comment: ", error);
+              alert("Error adding comment: " + error.message);
+            }
+          });
         });
         };
       });
+
+
 
      // Look at new Board
       document.addEventListener("DOMContentLoaded", () => {

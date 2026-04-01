@@ -105,6 +105,7 @@ orderBoards.forEach(async (board) => {
 
   const boardTitle = document.createElement("p");
   boardTitle.textContent = board.name;
+  boardTitle.className = "boardT"
 
   const boardID = document.createElement("p");
   boardID.textContent = "Board ID: " + board.id;
