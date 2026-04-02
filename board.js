@@ -38,6 +38,7 @@ onAuthStateChanged(auth, async (user) => {
 
      
       onAuthStateChanged(auth, async (user) => { 
+        
 
         // Back Button
         const backButton = document.getElementById("backButton");
@@ -49,26 +50,28 @@ onAuthStateChanged(auth, async (user) => {
       const docRef = await getDoc(doc(db, "users", user.uid));
       const BID = docRef.data().viewBoard;
       document.getElementById("bId").textContent = "Board ID: " + BID;
-
-      // Get Board Name
+      
       const boardRef = await getDoc(doc(db, "boards", BID));
+      const members = boardRef.data().members; // The array of members itself
+      
+      // Get Board Name & Member Count
+      const memberCount = members.length;
+      
       const bName = boardRef.data().name;
-      document.getElementById("bName").textContent = "Board Name: " + bName;
+      document.getElementById("bName").textContent = "Board Topic: " + bName + " (" + memberCount + ")";
 
       // Get Board Owner
       const ownerID = boardRef.data().creatorID;
       const ownerRef = await getDoc(doc(db, "users", ownerID));
       const ownerName = ownerRef.data().name;
-      document.getElementById("bOwner").textContent = "Owner: " + ownerName;
+      document.getElementById("bOwner").textContent = "Created By: " + ownerName;
       
       // Get Creation Date
       const createdAt = boardRef.data().createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
       document.getElementById("bDate").textContent = " Creation Date: " + createdAt.toLocaleDateString("en-US");  
 
 
-    // Get Board Members
-      const members = boardRef.data().members; // The array of members itself
-      
+    // Get Board Members      
       let memberNames = "Members: "; // Member list array
       for (const memberID of members) {
         const memberRef = await getDoc(doc(db, "users", memberID));
@@ -76,15 +79,12 @@ onAuthStateChanged(auth, async (user) => {
       }
 
       memberNames = memberNames.slice(0, -2); // Remove comma and space
-      document.getElementById("bMembers").textContent = memberNames;
+      //document.getElementById("bMembers").textContent = memberNames;
 
         // Check if user is a member of the board
         const isMember = members.includes(user.uid);
-        document.getElementById("bTF").textContent = "Is Member: " + isMember;
+        /*document.getElementById("bTF").textContent = "Is Member: " + isMember;*/
 
-        // Display Member Count
-        const memberCount = members.length;
-        document.getElementById("bMCount").textContent = "Member Count: " + memberCount;
 
         // Join/Leave Button
         const joinButton = document.getElementById("joinButton");
@@ -204,7 +204,7 @@ onAuthStateChanged(auth, async (user) => {
 
           // Check if user is a member of the board
           const isMember = members.includes(user.uid);
-          document.getElementById("bTF").textContent = "Is Member: " + isMember;
+          //document.getElementById("bTF").textContent = "Is Member: " + isMember;
 
           // Upvote and Downvote Buttons
           const upvoteButton = document.createElement("button");
@@ -388,8 +388,7 @@ onAuthStateChanged(auth, async (user) => {
                 const authorRef = await getDoc(doc(db, "users", comment.authorID)); // Gets authors ID
                 const authorName = authorRef.data().name; // Pulls authors name from ID
                 const comAuthor = document.createElement("p");
-                comAuthor.className = "commentBy";
-                comAuthor.textContent = "By: " + authorName;
+                comAuthor.classNamaent = "By: " + authorName;
       
                 const date = comment.createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
                 const comDate = document.createElement("p");
@@ -400,7 +399,7 @@ onAuthStateChanged(auth, async (user) => {
       
                 // Check if user is a member of the board
                 const isMember = members.includes(user.uid);
-                document.getElementById("bTF").textContent = "Is Member: " + isMember;
+                //document.getElementById("bTF").textContent = "Is Member: " + isMember;
       
                 // Upvote and Downvote Buttons
                 const upvoteButton = document.createElement("button");

@@ -148,27 +148,22 @@ body{
 
     .nRight{
         display: flex;
+        flex-direction: column;
         justify-content: space-around;
         align-items: center;
-        margin-left: 15%;
+        margin-left: 2%;
     }
 
     .nInfo{
         display: flex;
-        align-items: center;
-        height: 125px;
-        
-    }
-
-    .nNames{
-        display: flex;
         flex-direction: column;
         justify-content: center;
+        align-items: center;
         height: 125px;
     }
 
     .nNames{
-        text-overflow: ellipsis;
+        display: none;
     }
 
     .navPFP{
@@ -176,11 +171,6 @@ body{
         height: 46px;
         width: 46px;
         border-radius: 50%;
-    }
-
-    .nNames p{
-        margin:0px;
-        padding:0px;
     }
 
     .nOut button{
