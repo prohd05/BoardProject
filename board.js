@@ -12,7 +12,7 @@ onAuthStateChanged(auth, async (user) => {
         const mail = document.getElementById("emBoard"); // Get the element to display the email
         uni.textContent = user.displayName; // Set the username in the navbar
         mail.textContent = user.email; // Set the email in the navbar
-        pfp.src = user.photoURL; // Set the profile picture in the navbar
+        pfp.src = user.photoURL || ''; // Set the profile picture in the navbar
         } catch (error) {
         console.error("Error fetching user:", error); 
       }
@@ -39,13 +39,6 @@ onAuthStateChanged(auth, async (user) => {
      
       onAuthStateChanged(auth, async (user) => { 
         
-
-        // Back Button
-        const backButton = document.getElementById("backButton");
-        backButton.addEventListener("click", () => {
-          window.location.href = "home.html";
-        });
-        
       // Get BoardID
       const docRef = await getDoc(doc(db, "users", user.uid));
       const BID = docRef.data().viewBoard;
@@ -69,7 +62,6 @@ onAuthStateChanged(auth, async (user) => {
       // Get Creation Date
       const createdAt = boardRef.data().createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
       document.getElementById("bDate").textContent = " Creation Date: " + createdAt.toLocaleDateString("en-US");  
-
 
     // Get Board Members      
       let memberNames = "Members: "; // Member list array
@@ -119,60 +111,79 @@ onAuthStateChanged(auth, async (user) => {
         });
     // Comment Section
       displayComments();
+    
+      // Display Comments
+      async function displayComments() {        
+        const comList = document.getElementById("commentsSection");
 
-      // Allow Comment
-      
-        const commentForm = document.getElementById("commentForm");
-        
-        const commentInput = document.createElement("input");
-        commentInput.type = "text";
+        comList.innerHTML = "";
+
+        // Allow Comment
+        const commTitle = document.createElement("p");
+        commTitle.textContent = " Add a comment:";
+
+        let commentForm = document.getElementById("commentForm");
+        if (!commentForm) {
+          commentForm = document.createElement("form");
+          commentForm.id = "commentForm";
+        }
+
+        commentForm.innerHTML = "";
+
+        const commentInput = document.createElement("textarea");
         commentInput.id = "commentInput";
+        commentInput.className = "paragraph1";
         commentInput.placeholder = "Enter your comment";
         commentInput.required = true;
+        commentInput.style.resize = "vertical";
 
         const commentButton = document.createElement("button");
         commentButton.type = "submit";
         commentButton.textContent = "Post Comment";
+        commentButton.id="comB"
+        commentButton.className = "paragraph1"
 
         commentForm.appendChild(commentInput);
         commentForm.appendChild(commentButton);
-      if (!isMember){
-        commentInput.disabled = true;
-        commentButton.disabled = true;
-        commentInput.placeholder = "Join the board to comment";
-      }
-      
 
-      // Add Comments 
-      commentForm.addEventListener("submit", async (event) => {
-        const coi = commentInput.value;
-        event.preventDefault();
-        
-      try{
-        await addDoc(collection(db, "comments"), {
-          text: coi,
-          boardID: BID,
-          boardCID:ownerRef.id,
-          commentID:"0",
-          authorID: user.uid,
-          createdAt: serverTimestamp(),
-          upvotes: [],
-          downvotes: [],
-          creatorLiked: false,
-        });
-        await displayComments(); // Call displayComments to refresh the comments section
-        commentInput.value = ""; // Clear the input field after posting
-      } catch(error){
-        console.error("Error adding comment: ", error);
-        alert("Error adding comment: " + error.message);
-      }
-    });
-    
-      // Display Comments
-      async function displayComments() {        
-      const comList = document.getElementById("commentsSection");
-      comList.innerHTML = ""; // Clear existing comments
-      const orderComments = [];
+        if (!isMember){
+          commentInput.disabled = true;
+          commentButton.disabled = true;
+          commentInput.placeholder = "Join the board to comment";
+        }
+
+        commentForm.onsubmit = async (event) => {
+          event.preventDefault();
+
+          const coi = commentInput.value;
+
+          try {
+            await addDoc(collection(db, "comments"), {
+              text: coi,
+              boardID: BID,
+              boardCID: ownerRef.id,
+              commentID: "0",
+              authorID: user.uid,
+              createdAt: serverTimestamp(),
+              upvotes: [],
+              downvotes: [],
+              creatorLiked: false,
+            });
+
+            commentInput.value = "";
+
+            await displayComments();
+
+          } catch (error) {
+            console.error("Error adding comment: ", error);
+            alert("Error adding comment: " + error.message);
+          }
+        };
+
+        comList.appendChild(commTitle);
+        comList.appendChild(commentForm);
+
+        const orderComments = [];
       const commentsSnapshot = await getDocs(collection(db, "comments"));
       commentsSnapshot.forEach((doc) => {
         if (doc.data().boardID === BID && doc.data().commentID === "0"){
@@ -198,7 +209,7 @@ onAuthStateChanged(auth, async (user) => {
           const date = comment.createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
           const comDate = document.createElement("p");
           comDate.className = "commentDate";
-          comDate.textContent = "Posted on: " + date.toLocaleString(); // Format date as a readable string
+          comDate.textContent = "Posted on: " + date.toLocaleDateString("en-US"); // Format date as a readable string
 
           const likeMessage = document.createElement("p");
 
@@ -207,10 +218,20 @@ onAuthStateChanged(auth, async (user) => {
           //document.getElementById("bTF").textContent = "Is Member: " + isMember;
 
           // Upvote and Downvote Buttons
+          // Upvote Button
           const upvoteButton = document.createElement("button");
           const downvoteButton = document.createElement("button");
 
-          if(!isMember){
+          const upvoteIcon = document.createElement("img");
+          const downvoteIcon = document.createElement("img");
+
+          const upvoteText = document.createElement("p");
+          const downvoteText = document.createElement("p");
+
+          upvoteButton.className = "icons";
+          downvoteButton.className = "icons";
+
+          if (!isMember) {
             upvoteButton.disabled = true;
             downvoteButton.disabled = true;
           }
@@ -220,23 +241,29 @@ onAuthStateChanged(auth, async (user) => {
           let dislikers = [...comment.downvotes];
 
           function updateUpvoteText() {
-            upvoteButton.textContent = "Upvote (" + likers.length + ")";
-            if(likers.includes(user.uid)){
-              upvoteButton.style.backgroundColor = "green";
-            }
-            else{
-              upvoteButton.style.backgroundColor = "white";
+            upvoteText.textContent = " " + likers.length;
+            if (likers.includes(user.uid)) {
+              upvoteIcon.src = 'assets/votes/liked.png';
+            } else {
+              upvoteIcon.src = 'assets/votes/like.png';
             }
           }
+
           function updateDownvoteText() {
-            downvoteButton.textContent = "Downvote (" + dislikers.length + ")";
-            if(dislikers.includes(user.uid)){
-              downvoteButton.style.backgroundColor = "red";
-            }
-            else{
-              downvoteButton.style.backgroundColor = "white";
+            downvoteText.textContent = " " + dislikers.length;
+            if (dislikers.includes(user.uid)) {
+              downvoteIcon.src = 'assets/votes/disliked.png';
+            } else {
+              downvoteIcon.src = 'assets/votes/dislike.png';
             }
           }
+
+          upvoteButton.appendChild(upvoteIcon);
+          upvoteButton.appendChild(upvoteText);
+
+          downvoteButton.appendChild(downvoteIcon);
+          downvoteButton.appendChild(downvoteText);
+
           updateUpvoteText();
           updateDownvoteText();
 
@@ -245,22 +272,25 @@ onAuthStateChanged(auth, async (user) => {
             try {
               const hasLiked = likers.includes(user.uid);
               const hasDisliked = dislikers.includes(user.uid);
+
               if (hasLiked) {
                 likers = likers.filter(id => id !== user.uid);
               } else {
                 likers = [...likers, user.uid];
                 dislikers = dislikers.filter(id => id !== user.uid);
               }
+
               await updateDoc(commentRef, {
                 upvotes: likers,
                 downvotes: dislikers
               });
+
               updateUpvoteText();
               updateDownvoteText();
 
             } catch (error) {
               console.error("Upvote error:", error);
-              alert(error.message);
+              //alert(error.message);
             }
           });
 
@@ -276,42 +306,42 @@ onAuthStateChanged(auth, async (user) => {
                 dislikers = [...dislikers, user.uid];
                 likers = likers.filter(id => id !== user.uid);
               }
+
               await updateDoc(commentRef, {
                 upvotes: likers,
                 downvotes: dislikers
               });
+
               updateDownvoteText();
               updateUpvoteText();
-              
+
             } catch (error) {
               console.error("Downvote error:", error);
-              alert(error.message);
+              //alert(error.message);
             }
           });
 
           // Make Up/Downvote Buttons Functional, Make creator like fuctional, Make delete/edit buttons for comment authors
+          const buttons = document.createElement("div");
+          buttons.className = "butts"
           comList.appendChild(comDiv);
           comDiv.appendChild(comText);
           comDiv.appendChild(comAuthor);
           comDiv.appendChild(comDate);
           comDiv.appendChild(likeMessage);
-          comDiv.appendChild(upvoteButton);
-          comDiv.appendChild(downvoteButton);
+          comDiv.appendChild(buttons);
+          buttons.appendChild(upvoteButton);
+          buttons.appendChild(downvoteButton);
 
           // Creator Like Button
           if (user.uid === comment.boardCID){ 
             const likeButton = document.createElement("button");
-            comDiv.appendChild(likeButton);
+            likeButton.className = "icons";
+            buttons.appendChild(likeButton);
 
             function updateCreatorLikeText() {
               likeButton.textContent = comment.creatorLiked ? "Creator has Liked" : "Creator Like";
               likeMessage.textContent = "Creator Liked: " + comment.creatorLiked;
-              if(comment.creatorLiked){
-                likeButton.style.backgroundColor = "green";
-              }
-              else{
-                likeButton.style.backgroundColor = "white";
-              }
             }
 
             updateCreatorLikeText();
@@ -333,9 +363,11 @@ onAuthStateChanged(auth, async (user) => {
           // Makes the delete button on visible for owner and author
           if (user.uid === comment.authorID || user.uid === comment.boardCID){
             const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-            comDiv.appendChild(deleteButton);
-            deleteButton.style.backgroundColor = "white";
+                  const deleteIcon = document.createElement("img")
+                  deleteButton.appendChild(deleteIcon)
+                  deleteButton.className="icons"
+                  deleteIcon.src = "assets/delete.png";
+                  buttons.appendChild(deleteButton);
 
             deleteButton.addEventListener("click", async () => {
               try {
@@ -365,35 +397,36 @@ onAuthStateChanged(auth, async (user) => {
           replyForm.appendChild(replyButton);
 
           const replyArea = document.createElement("div");
+          replyArea.className = "replies"
           comDiv.appendChild(replyArea);
-        displayReplies(comment.id);
-        async function displayReplies(CID) {
-          replyArea.innerHTML = ""; // Clear existing comments
-            const orderReply = [];
-            const replySnapshot = await getDocs(collection(db, "comments"));
-            replySnapshot.forEach((doc) => {
-              if (doc.data().commentID === CID) { // Checks if comment is a top level comment for the board
-                orderReply.push({ id: doc.id, ...doc.data() });
-              }
-            });
+          displayReplies(comment.id);
+          async function displayReplies(CID) {
+            replyArea.innerHTML = ""; // Clear existing comments
+              const orderReply = [];
+              const replySnapshot = await getDocs(collection(db, "comments"));
+              replySnapshot.forEach((doc) => {
+                if (doc.data().commentID === CID) { // Checks if comment is a top level comment for the board
+                  orderReply.push({ id: doc.id, ...doc.data() });
+                }
+              });
             orderReply.sort((a, b) => b.createdAt - a.createdAt); // Sort by creation dat      
             orderReply.forEach(async (comment) => {
                 const repDiv = document.createElement("div");
-                repDiv.className = "commentBox";
+                repDiv.className = "replyBox";
+                
+                const authorRef = await getDoc(doc(db, "users", comment.authorID)); // Gets authors ID
+                const authorName = authorRef.data().name; // Pulls authors name from ID
+                const comAuthor = document.createElement("p");
+                comAuthor.textContent = authorName;
       
                 const comText = document.createElement("p");
                 comText.className = "commentText";
                 comText.textContent = "REPLY:" + comment.text;
       
-                const authorRef = await getDoc(doc(db, "users", comment.authorID)); // Gets authors ID
-                const authorName = authorRef.data().name; // Pulls authors name from ID
-                const comAuthor = document.createElement("p");
-                comAuthor.classNamaent = "By: " + authorName;
-      
                 const date = comment.createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
                 const comDate = document.createElement("p");
                 comDate.className = "commentDate";
-                comDate.textContent = "Posted on: " + date.toLocaleString(); // Format date as a readable string
+                comDate.textContent = "Posted on: " + date.toLocaleDateString("en-US"); // Format date as a readable string
       
                 const likeMessage = document.createElement("p");
       
@@ -402,111 +435,130 @@ onAuthStateChanged(auth, async (user) => {
                 //document.getElementById("bTF").textContent = "Is Member: " + isMember;
       
                 // Upvote and Downvote Buttons
+                 // Upvote Button
                 const upvoteButton = document.createElement("button");
                 const downvoteButton = document.createElement("button");
-      
-                if(!isMember){
+
+                const upvoteIcon = document.createElement("img");
+                const downvoteIcon = document.createElement("img");
+
+                const upvoteText = document.createElement("p");
+                const downvoteText = document.createElement("p");
+
+                upvoteButton.className = "icons";
+                downvoteButton.className = "icons";
+
+                if (!isMember) {
                   upvoteButton.disabled = true;
                   downvoteButton.disabled = true;
                 }
-      
+
                 const commentRef = doc(db, "comments", comment.id);
                 let likers = [...comment.upvotes];
                 let dislikers = [...comment.downvotes];
-      
+
                 function updateUpvoteText() {
-                  upvoteButton.textContent = "Upvote (" + likers.length + ")";
-                  if(likers.includes(user.uid)){
-                    upvoteButton.style.backgroundColor = "green";
-                  }
-                  else{
-                    upvoteButton.style.backgroundColor = "white";
+                  upvoteText.textContent = " " + likers.length;
+                  if (likers.includes(user.uid)) {
+                    upvoteIcon.src = 'assets/votes/liked.png';
+                  } else {
+                    upvoteIcon.src = 'assets/votes/like.png';
                   }
                 }
+
                 function updateDownvoteText() {
-                  downvoteButton.textContent = "Downvote (" + dislikers.length + ")";
-                  if(dislikers.includes(user.uid)){
-                    downvoteButton.style.backgroundColor = "red";
-                  }
-                  else{
-                    downvoteButton.style.backgroundColor = "white";
+                  downvoteText.textContent = " " + dislikers.length;
+                  if (dislikers.includes(user.uid)) {
+                    downvoteIcon.src = 'assets/votes/disliked.png';
+                  } else {
+                    downvoteIcon.src = 'assets/votes/dislike.png';
                   }
                 }
+
+                upvoteButton.appendChild(upvoteIcon);
+                upvoteButton.appendChild(upvoteText);
+
+                downvoteButton.appendChild(downvoteIcon);
+                downvoteButton.appendChild(downvoteText);
+
                 updateUpvoteText();
                 updateDownvoteText();
-      
+
                 // Upvote
                 upvoteButton.addEventListener("click", async () => {
                   try {
                     const hasLiked = likers.includes(user.uid);
                     const hasDisliked = dislikers.includes(user.uid);
+
                     if (hasLiked) {
                       likers = likers.filter(id => id !== user.uid);
                     } else {
                       likers = [...likers, user.uid];
                       dislikers = dislikers.filter(id => id !== user.uid);
                     }
+
                     await updateDoc(commentRef, {
                       upvotes: likers,
                       downvotes: dislikers
                     });
+
                     updateUpvoteText();
                     updateDownvoteText();
-      
+
                   } catch (error) {
                     console.error("Upvote error:", error);
-                    alert(error.message);
+                    //alert(error.message);
                   }
                 });
-      
+
                 // Downvote
                 downvoteButton.addEventListener("click", async () => {
                   try {
                     const hasLiked = likers.includes(user.uid);
                     const hasDisliked = dislikers.includes(user.uid);
-      
+
                     if (hasDisliked) {
                       dislikers = dislikers.filter(id => id !== user.uid);
                     } else {
                       dislikers = [...dislikers, user.uid];
                       likers = likers.filter(id => id !== user.uid);
                     }
+
                     await updateDoc(commentRef, {
                       upvotes: likers,
                       downvotes: dislikers
                     });
+
                     updateDownvoteText();
                     updateUpvoteText();
-                    
+
                   } catch (error) {
                     console.error("Downvote error:", error);
-                    alert(error.message);
+                    //alert(error.message);
                   }
                 });
       
                 // Make Up/Downvote Buttons Functional, Make creator like fuctional, Make delete/edit buttons for comment authors
+                const buttons2 = document.createElement("div");
+                buttons2.className = "butts"
                 replyArea.appendChild(repDiv)
                 repDiv.appendChild(comText);
                 repDiv.appendChild(comAuthor);
                 repDiv.appendChild(comDate);
                 repDiv.appendChild(likeMessage);
-                repDiv.appendChild(upvoteButton);
-                repDiv.appendChild(downvoteButton);
+                repDiv.appendChild(buttons2);
+                buttons2.appendChild(upvoteButton);
+                buttons2.appendChild(downvoteButton);
       
                 // Creator Like Button
                 if (user.uid === comment.boardCID){ 
                   const likeButton = document.createElement("button");
-                  repDiv.appendChild(likeButton);
+                  likeButton.className = "icons";
+                  buttons2.appendChild(likeButton);
       
                   function updateCreatorLikeText() {
                     likeButton.textContent = comment.creatorLiked ? "Creator has Liked" : "Creator Like";
                     likeMessage.textContent = "Creator Liked: " + comment.creatorLiked;
-                    if(comment.creatorLiked){
-                      likeButton.style.backgroundColor = "green";
-                    }
-                    else{
-                      likeButton.style.backgroundColor = "white";
-                    }
                   }
       
                   updateCreatorLikeText();
@@ -528,9 +580,11 @@ onAuthStateChanged(auth, async (user) => {
                 // Makes the delete button on visible for owner and author
                 if (user.uid === comment.authorID || user.uid === comment.boardCID){
                   const deleteButton = document.createElement("button");
-                  deleteButton.textContent = "Delete";
-                  repDiv.appendChild(deleteButton);
-                  deleteButton.style.backgroundColor = "white";
+                  const deleteIcon = document.createElement("img")
+                  deleteButton.appendChild(deleteIcon)
+                  deleteButton.className="icons"
+                  deleteIcon.src = "assets/delete.png";
+                  buttons2.appendChild(deleteButton);
       
                   deleteButton.addEventListener("click", async () => {
                     try {
@@ -577,28 +631,9 @@ onAuthStateChanged(auth, async (user) => {
           });
         });
         };
+      }); 
+
+      const cli = document.getElementById("nClick");
+      cli.addEventListener("click", async (event) =>{
+        window.location.href = "home.html";
       });
-
-
-
-     // Look at new Board
-      document.addEventListener("DOMContentLoaded", () => {
-      const researchForm = document.getElementById("research");
-      researchForm.addEventListener("submit", async (event) => {
-          event.preventDefault();
-
-          const newBID = document.getElementById("researchID").value;
-          const user = auth.currentUser;
-
-          try {
-              await updateDoc(doc(db, "users", user.uid), {
-                  viewBoard: newBID // Update user's viewBoard to the joined board's ID
-              });
-              document.getElementById("researchID").value = ""; // Clear the input field
-              window.location.reload(); // Refresh the page to load the new board's data
-          } catch (error) {
-              alert("Error joining board: " + error.message); // Show error to user
-              console.error("Join board error:", error); // Log error to console
-          }
-      });
-  });

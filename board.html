@@ -7,48 +7,52 @@
         <title> Board </title>
     </head>
     <body>
-        <div>
-            <nav class="nav">
-                <div class="nLeft">
-                    <img class="nLogo" src="assets/logo.png" alt="Logo"/>
-                    <h2> Post-It! </h2>
-                </div>
-                <div class="nRight">
-                    <div class="nInfo"> 
-                        <img id="pfpBoard" class="navPFP"/>
-                        <div class="nNames"> 
-                            <p id="unBoard" class="nName" > Name Here... </p>
-                            <p id="emBoard" class="nEmail"> Email Here </p>
+            <div>
+                <nav class="nav">
+                    <button class="nLeft" id="nClick">
+                        <img class="nLogo" src="assets/logo.png" alt="Logo"/>
+                        <h2> Post-It! </h2>
+                    </button>
+                    <div class="nRight">
+                        <div class="nInfo"> 
+                            <img id="pfpBoard" class="navPFP"/>
+                            <div class="nNames"> 
+                                <p id="unBoard" class="nName" > Name Here... </p>
+                                <p id="emBoard" class="nEmail"> Email Here </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="nOut">
-                    <button id="soBoard" class="paragraph1"> Logout </button>
-                </div>
-            </nav>
+                    <div class="nOut">
+                        <button id="soBoard" class="paragraph1"> Logout </button>
+                    </div>
+                </nav>
 
-            <!--
-            <form id="research">
-                <input type="text" id="researchID" placeholder="Enter Board ID" required/>
-                <button id="rsButton" type="submit"> View Board </button>
-            </form>
-            <button id="backButton"> Back </button>-->
-            
-            <div id="boardIn"> 
-                <p id="bName"> Board Topic: N/A </p>
-                <p id="bId"> Board ID: N/A </p>
-                <p id="bOwner"> Created By: N/A </p>
-                <p id="bDate"> Creation Date: N/A</p>
-            </div>
-
-            <button id="joinButton"> Join Board </button>
-            
-            <h3> Comments </h3>
-            <form id="commentForm">
+                <!--
+                <form id="research">
+                    <input type="text" id="researchID" placeholder="Enter Board ID" required/>
+                    <button id="rsButton" type="submit"> View Board </button>
+                </form>
+                <button id="backButton"> Back </button>-->
                 
-            </form>
+                <div id="boardIn"> 
+                    <p id="bName"> Board Topic: N/A </p>
+                    <p id="bId"> Board ID: N/A </p>
+                    <p id="bOwner"> Created By: N/A </p>
+                    <p id="bDate"> Creation Date: N/A</p>
+                </div>
+                <div id="boardPage">
+                <button id="joinButton" class="paragraph1"> Join Board </button>
+                
+                
 
-            <div id="commentsSection">
+                <div id="commStats">
+                    
+                    <div id="commentsSection">
+                        <form id="commentForm">
+                            
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
         <script type="module" src="board.js" defer></script>

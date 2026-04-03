@@ -141,3 +141,8 @@ orderBoards.forEach(async (board) => {
   boardButtton.appendChild(boardCreation);
 });
 };
+
+ const cli = document.getElementById("nClick");
+      cli.addEventListener("click", async (event) =>{
+        window.location.href = "home.html";
+      });

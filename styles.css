@@ -18,6 +18,12 @@ body{
     text-overflow: ellipsis;
 }
 
+#boardPage{
+    display: flex;
+    flex-direction: column;
+}
+
+
 /* Mobile Media Query*/
 @media screen and (max-width:799px) {
     h1{
@@ -139,6 +145,9 @@ body{
         display: flex;
         justify-content: center;
         align-items: center;
+        background-color: transparent;
+        border: none;
+        color:white;
     }
 
     .nLogo{
@@ -210,6 +219,54 @@ body{
     .sides{
         display: flex;
         justify-content: space-evenly;
+    }
+
+    #boardIn{
+        display: flex;
+        flex-direction: column;
+        background-color: #5282DB;
+        color:#FFFFFF;
+        justify-content: space-evenly;
+    }
+
+    #boardIn p{
+        margin-top: 0px;
+        margin-bottom: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        text-align: center;
+    }
+
+    #joinButton{
+        border: #5282DB solid 2px;
+        border-radius: 5px;
+        background-color: #FFFFFF;
+    }
+
+    #bDate{
+        display: none;
+    }
+
+    .butts{
+        display: flex;
+    }
+
+    .icons{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height:30px;
+        background-color: transparent;
+        border: none;
+    }
+
+    .icons img{
+        height: 20px;
+        margin-right: 5px;
+    }
+
+    .replies{
+        margin-left: 5%;
     }
 }
 
@@ -329,6 +386,9 @@ body{
         display: flex;
         justify-content: center;
         align-items: center;
+        background-color: transparent;
+        border: none;
+        color:white;
     }
 
     .nLogo{
@@ -407,6 +467,41 @@ body{
     .sides{
         display: flex;
         justify-content: space-evenly;
+    }
+
+    #boardIn{
+        display: flex;
+        background-color: #5282DB;
+        color:#FFFFFF;
+        justify-content: space-evenly;
+    }
+
+    #joinButton{
+        border: #5282DB solid 2px;
+        border-radius: 5px;
+        background-color: #FFFFFF;
+    }
+
+    .butts{
+        display: flex;
+    }
+
+    .icons{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height:30px;
+        background-color: transparent;
+        border: none;
+    }
+
+    .icons img{
+        height: 20px;
+        margin-right: 5px;
+    }
+
+    .replies{
+        margin-left: 5%;
     }
 }
 
@@ -526,6 +621,9 @@ body{
         display: flex;
         justify-content: center;
         align-items: center;
+        background-color: transparent;
+        border: none;
+        color:white;
     }
 
     .nLogo{
@@ -635,5 +733,100 @@ body{
         border-radius: 5px;
         width: 489px;
         text-align: start;
+    }
+
+    #boardIn{
+        display: flex;
+        background-color: #5282DB;
+        color:#FFFFFF;
+        justify-content: space-evenly;
+    }
+
+    #joinButton{
+        border: #5282DB solid 2px;
+        border-radius: 5px;
+        background-color: #FFFFFF;
+    }
+
+    .butts{
+        display: flex;
+    }
+
+    .icons{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height:30px;
+        background-color: transparent;
+        border: none;
+    }
+
+    .icons img{
+        height: 20px;
+        margin-right: 5px;
+    }
+
+    #commStats{
+        background-color: #8B511F;
+        border: 20px solid black;
+        margin-top: 5%;
+        padding-left: 5%;
+        padding-right: 5%;
+        padding-top: 2%;
+        padding-bottom: 2%;
+        color:white;
+        text-align: center;
+    }
+
+    #commentsSection{
+        background-color: #BC7A38;
+        border: solid black 3px;
+        border-radius: 6px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }   
+
+    #commentForm{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        width: 90%;
+    }
+
+    #comB{
+        border: black solid 2px;
+        border-radius: 5px;
+        background-color: #FFFFFF;
+        width: 90%;
+    }
+
+    #commentInput{
+        width: 90%;
+        height: 160px;
+        border:solid black 1px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        text-align: left;
+        vertical-align: top;
+        padding:1%;
+    }
+
+    .commentBox{
+        width: 919px;
+        margin-bottom: 5%;
+    }
+
+
+    .replyBox{
+        padding:1%;
+        margin-left: 15%;
+        margin-bottom: 5%;
+        border: solid black 1px;
+        background-color: #FFF153;
+        color:black;
+        text-align: left;
     }
 }
