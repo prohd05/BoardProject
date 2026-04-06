@@ -120,7 +120,7 @@ onAuthStateChanged(auth, async (user) => {
 
         // Allow Comment
         const commTitle = document.createElement("p");
-        commTitle.textContent = " Add a comment:";
+        commTitle.textContent = " Add A Comment";
 
         let commentForm = document.getElementById("commentForm");
         if (!commentForm) {
@@ -150,6 +150,7 @@ onAuthStateChanged(auth, async (user) => {
           commentInput.disabled = true;
           commentButton.disabled = true;
           commentInput.placeholder = "Join the board to comment";
+          commentButton.style.display = "none";
         }
 
         commentForm.onsubmit = async (event) => {
@@ -192,9 +193,12 @@ onAuthStateChanged(auth, async (user) => {
       });
       orderComments.sort((a, b) => b.createdAt - a.createdAt); // Sort by creation dat      
       orderComments.forEach(async (comment) => {
-        
-          const comDiv = document.createElement("div");
+
+        const comDiv = document.createElement("div");
           comDiv.className = "commentBox";
+        
+          const inDiv = document.createElement("div");
+          inDiv.className = "commArea";
 
           const comText = document.createElement("p");
           comText.className = "commentText";
@@ -204,14 +208,15 @@ onAuthStateChanged(auth, async (user) => {
           const authorName = authorRef.data().name; // Pulls authors name from ID
           const comAuthor = document.createElement("p");
           comAuthor.className = "commentBy";
-          comAuthor.textContent = "By: " + authorName;
+          comAuthor.textContent = "Posted By " + authorName;
 
           const date = comment.createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
           const comDate = document.createElement("p");
           comDate.className = "commentDate";
           comDate.textContent = "Posted on: " + date.toLocaleDateString("en-US"); // Format date as a readable string
 
-          const likeMessage = document.createElement("p");
+          const likeMessage = document.createElement("img");
+          likeMessage.className="clike";
 
           // Check if user is a member of the board
           const isMember = members.includes(user.uid);
@@ -321,31 +326,45 @@ onAuthStateChanged(auth, async (user) => {
             }
           });
 
+          // Check Mark
+
           // Make Up/Downvote Buttons Functional, Make creator like fuctional, Make delete/edit buttons for comment authors
           const buttons = document.createElement("div");
-          buttons.className = "butts"
+          const area = document.createElement("div");
+          buttons.className = "butts";
+          area.className = "area"
           comList.appendChild(comDiv);
-          comDiv.appendChild(comText);
-          comDiv.appendChild(comAuthor);
-          comDiv.appendChild(comDate);
-          comDiv.appendChild(likeMessage);
-          comDiv.appendChild(buttons);
-          buttons.appendChild(upvoteButton);
-          buttons.appendChild(downvoteButton);
+          comDiv.appendChild(area)
+          area.appendChild(inDiv)
+          inDiv.appendChild(likeMessage);
+          inDiv.appendChild(comAuthor);
+          inDiv.appendChild(comText);  
+          inDiv.appendChild(comDate);
+          area.appendChild(buttons);
+
+          const bl = document.createElement("div")
+          const br = document.createElement("div")
+          buttons.appendChild(bl);
+          buttons.appendChild(br);
+
+          bl.appendChild(upvoteButton);
+          bl.appendChild(downvoteButton);
 
           // Creator Like Button
-          if (user.uid === comment.boardCID){ 
             const likeButton = document.createElement("button");
             likeButton.className = "icons";
-            buttons.appendChild(likeButton);
+            br.appendChild(likeButton);
 
-            function updateCreatorLikeText() {
-              likeButton.textContent = comment.creatorLiked ? "Creator has Liked" : "Creator Like";
-              likeMessage.textContent = "Creator Liked: " + comment.creatorLiked;
+            const likeBI = document.createElement("img")
+            likeButton.appendChild(likeBI);
+
+          function updateCreatorLikeText() {
+              likeBI.src = comment.creatorLiked ? "assets/votes/hearted.png" : "assets/votes/heart.png";
+              likeMessage.src= comment.creatorLiked?"assets/creator.png":"assets/blank.png"
             }
-
             updateCreatorLikeText();
-
+          if (user.uid === comment.boardCID){ 
+            
             likeButton.addEventListener("click", async () => {
             try {
               comment.creatorLiked = !comment.creatorLiked;
@@ -359,6 +378,9 @@ onAuthStateChanged(auth, async (user) => {
             }
           });
           }
+          else{
+            likeButton.style.display = "none";
+          }
           
           // Makes the delete button on visible for owner and author
           if (user.uid === comment.authorID || user.uid === comment.boardCID){
@@ -367,7 +389,7 @@ onAuthStateChanged(auth, async (user) => {
                   deleteButton.appendChild(deleteIcon)
                   deleteButton.className="icons"
                   deleteIcon.src = "assets/delete.png";
-                  buttons.appendChild(deleteButton);
+                  br.appendChild(deleteButton);
 
             deleteButton.addEventListener("click", async () => {
               try {
@@ -382,16 +404,23 @@ onAuthStateChanged(auth, async (user) => {
 
           // Reply to Comment 
           const replyForm = document.createElement("form");
+          replyForm.className = "replyForm"
         
-          const replyInput = document.createElement("input");
-          replyInput.type = "text";
+          const replyInput = document.createElement("textarea");
+          replyInput.className="repIn"
           replyInput.id = "replyInput";
-          replyInput.placeholder = "Enter your comment";
+          replyInput.placeholder = "Reply to comment";
           replyInput.required = true;
+          replyInput.rows = 1;
 
           const replyButton = document.createElement("button");
           replyButton.type = "submit";
-          replyButton.textContent = "Post Comment";
+          replyButton.className="repBut"
+          const replylogo = document.createElement("img");
+          replylogo.src = "assets/reply.png";
+          replylogo.alt = "Reply";
+          replylogo.className="replo"
+          replyButton.appendChild(replylogo);
           comDiv.appendChild(replyForm);
           replyForm.appendChild(replyInput);
           replyForm.appendChild(replyButton);
@@ -417,18 +446,19 @@ onAuthStateChanged(auth, async (user) => {
                 const authorRef = await getDoc(doc(db, "users", comment.authorID)); // Gets authors ID
                 const authorName = authorRef.data().name; // Pulls authors name from ID
                 const comAuthor = document.createElement("p");
-                comAuthor.textContent = authorName;
+                comAuthor.textContent = authorName + " Replied";
       
                 const comText = document.createElement("p");
                 comText.className = "commentText";
-                comText.textContent = "REPLY:" + comment.text;
+                comText.textContent = comment.text;
       
                 const date = comment.createdAt.toDate(); // Convert Firestore timestamp to JavaScript Date
                 const comDate = document.createElement("p");
                 comDate.className = "commentDate";
                 comDate.textContent = "Posted on: " + date.toLocaleDateString("en-US"); // Format date as a readable string
       
-                const likeMessage = document.createElement("p");
+                const likeMessage = document.createElement("img");
+                likeMessage.className="clike";
       
                 // Check if user is a member of the board
                 const isMember = members.includes(user.uid);
@@ -540,28 +570,43 @@ onAuthStateChanged(auth, async (user) => {
       
                 // Make Up/Downvote Buttons Functional, Make creator like fuctional, Make delete/edit buttons for comment authors
                 const buttons2 = document.createElement("div");
+                const area = document.createElement("div");
+                const inDiv = document.createElement("div");
                 buttons2.className = "butts"
-                replyArea.appendChild(repDiv)
-                repDiv.appendChild(comText);
-                repDiv.appendChild(comAuthor);
-                repDiv.appendChild(comDate);
-                repDiv.appendChild(likeMessage);
-                repDiv.appendChild(buttons2);
-                buttons2.appendChild(upvoteButton);
-                buttons2.appendChild(downvoteButton);
+                area.className="area"
+                inDiv.className="repArea"
+                replyArea.appendChild(repDiv);
+                repDiv.appendChild(area)
+                area.appendChild(inDiv)
+                inDiv.appendChild(likeMessage);
+                inDiv.appendChild(comAuthor);
+                inDiv.appendChild(comText);
+                inDiv.appendChild(comDate);
+                area.appendChild(buttons2);
+
+                const bl = document.createElement("div")
+                const br = document.createElement("div")
+                buttons2.appendChild(bl);
+                buttons2.appendChild(br);
+
+                bl.appendChild(upvoteButton);
+                bl.appendChild(downvoteButton);
       
                 // Creator Like Button
-                if (user.uid === comment.boardCID){ 
-                  const likeButton = document.createElement("button");
-                  likeButton.className = "icons";
-                  buttons2.appendChild(likeButton);
-      
-                  function updateCreatorLikeText() {
-                    likeButton.textContent = comment.creatorLiked ? "Creator has Liked" : "Creator Like";
-                    likeMessage.textContent = "Creator Liked: " + comment.creatorLiked;
-                  }
+                const likeButton = document.createElement("button");
+                likeButton.className = "icons";
+                br.appendChild(likeButton);
+
+                const likeBI = document.createElement("img")
+                likeButton.appendChild(likeBI);
+
+              function updateCreatorLikeText() {
+                  likeBI.src = comment.creatorLiked ? "assets/votes/hearted.png" : "assets/votes/heart.png";
+                  likeMessage.src= comment.creatorLiked?"assets/creator.png":"assets/blank.png"
+                }
       
                   updateCreatorLikeText();
+                if (user.uid === comment.boardCID){ 
       
                   likeButton.addEventListener("click", async () => {
                   try {
@@ -576,6 +621,9 @@ onAuthStateChanged(auth, async (user) => {
                   }
                 });
                 }
+                else{
+                  likeButton.style.display = "none";
+                }
                 
                 // Makes the delete button on visible for owner and author
                 if (user.uid === comment.authorID || user.uid === comment.boardCID){
@@ -584,7 +632,7 @@ onAuthStateChanged(auth, async (user) => {
                   deleteButton.appendChild(deleteIcon)
                   deleteButton.className="icons"
                   deleteIcon.src = "assets/delete.png";
-                  buttons2.appendChild(deleteButton);
+                  br.appendChild(deleteButton);
       
                   deleteButton.addEventListener("click", async () => {
                     try {
